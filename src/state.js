@@ -1,4 +1,4 @@
-import {ALL_KEYS} from './const';
+import {ALL_KEYS, IS_LOADING, CURRENT_PAGE, PER_PAGE} from './const';
 import fromPairs from 'lodash-es/fromPairs';
 
 export const mergeState = function (keys = ALL_KEYS, ...state) {
@@ -8,9 +8,9 @@ export const mergeState = function (keys = ALL_KEYS, ...state) {
       key
     ])),
 
-    [IS_LOADING]: false,
-    [CURRENT_PAGE]: 1,
-    [PER_PAGE]: 10,
+    [keys[IS_LOADING]]: false,
+    [keys[CURRENT_PAGE]]: 1,
+    [keys[PER_PAGE]]: 10,
 
     ...state
   };
