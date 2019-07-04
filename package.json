@@ -2,9 +2,10 @@
   "name": "vuex-async-paginate",
   "version": "0.0.4",
   "description": "Хеллперы для табличных данных",
-  "main": "src/vuex-async-paginate.js",
+  "main": "dist/vuex-async-paginate.js",
   "files": [
-    "src/"
+    "src/",
+    "dist/"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -17,7 +18,6 @@
     "lodash-es": "^4.17.11"
   },
   "devDependencies": {
-    "parcel": "^1.12.3",
-    "parcel-plugin-bundle-visualiser": "^1.2.0"
+    "parcel": "^1.12.3"
   }
 }
