@@ -59,7 +59,6 @@ export const mergeActions = function (keys = ALL_KEYS, actions = {}) {
         };
 
         dispatch('getData', params).then(res => {
-          console.log(res[CONST_DATA]);
           const data = res[CONST_DATA] || [];
           const meta = {
             [CONST_CURRENT_PAGE]: 1,

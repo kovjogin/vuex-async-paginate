@@ -8,6 +8,13 @@ export const mergeGetters = function (keys = ALL_KEYS, getters) {
       (state) => state[key]
     ])),
 
+    keys: (state) => ({
+      ...fromPairs(Object.values(keys).map(key => [
+        key,
+        (state) => state[key]
+      ]))
+    }),
+
     ...getters
   };
 };

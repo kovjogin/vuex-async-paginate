@@ -1,8 +1,8 @@
-import {ALL_KEYS} from './src/const';
-import {mergeMutations} from './src/mutations';
-import {mergeGetters} from './src/getters';
-import {mergeActions} from './src/actions';
-import {mergeState} from './src/state';
+import {ALL_KEYS} from './const';
+import {mergeMutations} from './mutations';
+import {mergeGetters} from './getters';
+import {mergeActions} from './actions';
+import {mergeState} from './state';
 
 /**
  * @merge - Объект с ключами [state, mutations, actions, getters] - необязательный
@@ -10,7 +10,7 @@ import {mergeState} from './src/state';
  * @vars - модификация переменных отвечающих за пагинацию
  *
  * **/
-const createStore = function (merge = {}, namespaced = true, vars = {}) {
+export const createStore = function (merge = {}, namespaced = true, vars = {}) {
   const {mutations = {}, getters = {}, actions = {}, state = {}, ...other} = merge;
   const keys = {
     ...ALL_KEYS,
@@ -26,8 +26,4 @@ const createStore = function (merge = {}, namespaced = true, vars = {}) {
     ...other
   };
 
-};
-
-export {
-  createStore
 };
