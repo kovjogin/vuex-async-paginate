@@ -1,0 +1,93 @@
+import {
+  DATA,
+  PER_PAGE,
+  TOTAL_ITEMS,
+  CURRENT_PAGE,
+  SORT_COLUMN,
+  SORT_DIRECTION,
+  TOTAL_PAGES,
+  FILTER,
+  ALL_KEYS, IS_LOADING, META
+} from './const';
+
+export const mergeActions = function (keys = ALL_KEYS, actions = {}) {
+  const CONST_LOADING = keys[IS_LOADING];
+  const CONST_PER_PAGE = keys[PER_PAGE];
+  const CONST_CURRENT_PAGE = keys[CURRENT_PAGE];
+  const CONST_SORT_COLUMN = keys[SORT_COLUMN];
+  const CONST_SORT_DIRECTION = keys[SORT_DIRECTION];
+  const CONST_FILTER = keys[FILTER];
+  const CONST_META = keys[META];
+  const CONST_DATA = keys[DATA];
+  const CONST_TOTAL_ITEMS = keys[TOTAL_ITEMS];
+  const CONST_TOTAL_PAGES = keys[TOTAL_PAGES];
+
+  return {
+    setLoading: ({commit}, value) => commit(CONST_LOADING, !!value),
+
+    changePerPage: ({commit, dispatch}, value) => {
+      commit(CONST_PER_PAGE, value);
+      commit(CONST_CURRENT_PAGE, 1);
+      return dispatch('getAsyncData');
+    },
+
+    changePage: ({dispatch}, value) => {
+      dispatch('getAsyncData', {[CONST_CURRENT_PAGE]: value});
+    },
+
+    changeSort: ({commit, dispatch}, value) => {
+      const {CONST_SORT_COLUMN: sort_by, CONST_SORT_DIRECTION: sort_direction} = value;
+      if (sort_by && sort_direction) {
+        commit(CONST_SORT_COLUMN, sort_by);
+        commit(CONST_SORT_DIRECTION, sort_direction);
+        return dispatch('getAsyncData');
+      }
+    },
+
+    getAsyncData: ({dispatch, commit, getters}, value) => {
+      return new Promise(resolve => {
+        dispatch('setLoading', true);
+        const filters = getters[CONST_FILTER];
+
+        const params = {
+          [CONST_CURRENT_PAGE]: getters[CONST_CURRENT_PAGE],
+          [CONST_PER_PAGE]: getters[CONST_PER_PAGE] || 10,
+          [CONST_SORT_DIRECTION]: getters[CONST_SORT_DIRECTION],
+          [CONST_SORT_COLUMN]: getters[CONST_SORT_COLUMN],
+          ...filters,
+          ...value
+        };
+
+        dispatch('getData', params).then(res => {
+          console.log(res[CONST_DATA]);
+          const data = res[CONST_DATA] || [];
+          const meta = {
+            [CONST_CURRENT_PAGE]: 1,
+            [CONST_PER_PAGE]: data.length,
+            [CONST_TOTAL_ITEMS]: data.length,
+            [CONST_TOTAL_PAGES]: 1,
+
+            ...(res[CONST_META] ? res[CONST_META] : {})
+          };
+
+          commit(CONST_PER_PAGE, meta[CONST_PER_PAGE]);
+          commit(CONST_TOTAL_ITEMS, meta[CONST_TOTAL_ITEMS]);
+          commit(CONST_TOTAL_PAGES, meta[CONST_TOTAL_PAGES]);
+          commit(CONST_CURRENT_PAGE, meta[CONST_CURRENT_PAGE]);
+          commit(CONST_DATA, data);
+
+          dispatch('setLoading', false);
+          resolve(value);
+        });
+      });
+    },
+
+    search: ({dispatch, commit}, value) => {
+      commit(CONST_FILTER, value);
+      return dispatch('getAsyncData', value);
+    },
+
+    getData: () => (console.error('Укажите getData в actions')),
+    ...actions
+  };
+};
