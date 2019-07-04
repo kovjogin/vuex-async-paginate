@@ -2,14 +2,14 @@
   "name": "vuex-async-paginate",
   "version": "0.0.5",
   "description": "Хеллперы для табличных данных",
-  "main": "dist/vuex-async-paginate.js",
+  "main": "src",
   "files": [
     "src/",
     "dist/"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "parcel build src/vuex-async-paginate.js"
+    "serve": "cd ./demo && yarn serve"
   },
   "repository": "https://github.com/kovjogin/vuex-async-paginate.git",
   "author": "r.kovjogin@gmail.com",

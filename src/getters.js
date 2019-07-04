@@ -11,7 +11,7 @@ export const mergeGetters = function (keys = ALL_KEYS, getters) {
     keys: (state) => ({
       ...fromPairs(Object.values(keys).map(key => [
         key,
-        (state) => state[key]
+        state['keys'][key]
       ]))
     }),
 
