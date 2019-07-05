@@ -1,6 +1,6 @@
 {
   "name": "vuex-async-paginate",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Хеллперы для табличных данных",
   "main": "src",
   "files": [
