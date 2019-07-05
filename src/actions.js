@@ -36,10 +36,12 @@ export const mergeActions = function (keys = ALL_KEYS, actions = {}) {
     },
 
     changeSort: ({commit, dispatch}, value) => {
-      const {CONST_SORT_COLUMN: sort_by, CONST_SORT_DIRECTION: sort_direction} = value;
+      const {[CONST_SORT_COLUMN]: sort_by, [CONST_SORT_DIRECTION]: sort_direction} = value;
       if (sort_by && sort_direction) {
         commit(CONST_SORT_COLUMN, sort_by);
         commit(CONST_SORT_DIRECTION, sort_direction);
+        console.log(value);
+
         return dispatch('getAsyncData');
       }
     },
