@@ -9,6 +9,10 @@ export const PER_PAGE = 'itemsPerPage';
 export const DATA = 'data';
 export const FILTER = 'filter';
 export const META = 'meta';
+export const IS_SUCCESS_RESPONSE = 'isSuccess';
+export const IS_FAIL_RESPONSE = 'isFail';
+export const SUCCESS_RESPONSE = 'successResponse';
+export const FAIL_RESPONSE = 'failResponse';
 
 export const ALL_KEYS = {
   [TABLE]: TABLE,
@@ -22,4 +26,8 @@ export const ALL_KEYS = {
   [DATA]: DATA,
   [FILTER]: FILTER,
   [META]: META,
-}
+  [IS_SUCCESS_RESPONSE]: IS_SUCCESS_RESPONSE,
+  [IS_FAIL_RESPONSE]: IS_FAIL_RESPONSE,
+  [SUCCESS_RESPONSE]: SUCCESS_RESPONSE,
+  [FAIL_RESPONSE]: FAIL_RESPONSE
+};

@@ -7,10 +7,16 @@ import {
   SORT_DIRECTION,
   TOTAL_PAGES,
   FILTER,
-  ALL_KEYS, IS_LOADING, META
+  ALL_KEYS,
+  IS_LOADING,
+  META,
+  IS_SUCCESS_RESPONSE,
+  IS_FAIL_RESPONSE,
+  SUCCESS_RESPONSE,
+  FAIL_RESPONSE
 } from './const';
 
-export const mergeActions = function (keys = ALL_KEYS, actions = {}) {
+export const mergeActions = function(keys = ALL_KEYS, actions = {}) {
   const CONST_LOADING = keys[IS_LOADING];
   const CONST_PER_PAGE = keys[PER_PAGE];
   const CONST_CURRENT_PAGE = keys[CURRENT_PAGE];
@@ -21,32 +27,47 @@ export const mergeActions = function (keys = ALL_KEYS, actions = {}) {
   const CONST_DATA = keys[DATA];
   const CONST_TOTAL_ITEMS = keys[TOTAL_ITEMS];
   const CONST_TOTAL_PAGES = keys[TOTAL_PAGES];
+  const CONST_IS_SUCCESS_RESPONSE = keys[IS_SUCCESS_RESPONSE];
+  const CONST_IS_FAIL_RESPONSE = keys[IS_FAIL_RESPONSE];
+  const CONST_SUCCESS_RESPONSE = keys[SUCCESS_RESPONSE];
+  const CONST_FAIL_RESPONSE = keys[FAIL_RESPONSE];
 
   return {
-    setLoading: ({commit}, value) => commit(CONST_LOADING, !!value),
+    setLoading: ({ commit }, value) => commit(CONST_LOADING, !!value),
 
-    changePerPage: ({commit, dispatch}, value) => {
+    setSuccess: ({ commit }, value) => {
+      commit(CONST_SUCCESS_RESPONSE, value);
+      commit(CONST_IS_FAIL_RESPONSE, false);
+      commit(CONST_IS_SUCCESS_RESPONSE, true);
+    },
+
+    setFail: ({ commit }, value) => {
+      commit(CONST_FAIL_RESPONSE, value);
+      commit(CONST_IS_SUCCESS_RESPONSE, false);
+      commit(CONST_IS_FAIL_RESPONSE, true);
+    },
+
+    changePerPage: ({ commit, dispatch }, value) => {
       commit(CONST_PER_PAGE, value);
       commit(CONST_CURRENT_PAGE, 1);
       return dispatch('getAsyncData');
     },
 
-    changePage: ({dispatch}, value) => {
-      dispatch('getAsyncData', {[CONST_CURRENT_PAGE]: value});
+    changePage: ({ dispatch }, value) => {
+      dispatch('getAsyncData', { [CONST_CURRENT_PAGE]: value });
     },
 
-    changeSort: ({commit, dispatch}, value) => {
-      const {[CONST_SORT_COLUMN]: sort_by, [CONST_SORT_DIRECTION]: sort_direction} = value;
+    changeSort: ({ commit, dispatch }, value) => {
+      const { [CONST_SORT_COLUMN]: sort_by, [CONST_SORT_DIRECTION]: sort_direction } = value;
       if (sort_by && sort_direction) {
         commit(CONST_SORT_COLUMN, sort_by);
         commit(CONST_SORT_DIRECTION, sort_direction);
-        console.log(value);
 
         return dispatch('getAsyncData');
       }
     },
 
-    getAsyncData: ({dispatch, commit, getters}, value) => {
+    getAsyncData: ({ dispatch, commit, getters }, value) => {
       return new Promise(resolve => {
         dispatch('setLoading', true);
         const filters = getters[CONST_FILTER];
@@ -60,35 +81,38 @@ export const mergeActions = function (keys = ALL_KEYS, actions = {}) {
           ...value
         };
 
-        dispatch('getData', params).then(res => {
-          const data = res[CONST_DATA] || [];
-          const meta = {
-            [CONST_CURRENT_PAGE]: 1,
-            [CONST_PER_PAGE]: data.length,
-            [CONST_TOTAL_ITEMS]: data.length,
-            [CONST_TOTAL_PAGES]: 1,
+        dispatch('getData', params)
+          .then(res => {
+            const data = res[CONST_DATA] || [];
+            const meta = {
+              [CONST_CURRENT_PAGE]: 1,
+              [CONST_PER_PAGE]: data.length,
+              [CONST_TOTAL_ITEMS]: data.length,
+              [CONST_TOTAL_PAGES]: 1,
 
-            ...(res[CONST_META] ? res[CONST_META] : {})
-          };
+              ...(res[CONST_META] ? res[CONST_META] : {})
+            };
 
-          commit(CONST_PER_PAGE, meta[CONST_PER_PAGE]);
-          commit(CONST_TOTAL_ITEMS, meta[CONST_TOTAL_ITEMS]);
-          commit(CONST_TOTAL_PAGES, meta[CONST_TOTAL_PAGES]);
-          commit(CONST_CURRENT_PAGE, meta[CONST_CURRENT_PAGE]);
-          commit(CONST_DATA, data);
+            commit(CONST_PER_PAGE, meta[CONST_PER_PAGE]);
+            commit(CONST_TOTAL_ITEMS, meta[CONST_TOTAL_ITEMS]);
+            commit(CONST_TOTAL_PAGES, meta[CONST_TOTAL_PAGES]);
+            commit(CONST_CURRENT_PAGE, meta[CONST_CURRENT_PAGE]);
+            commit(CONST_DATA, data);
 
-          dispatch('setLoading', false);
-          resolve(value);
-        });
+            dispatch('setSuccess', res);
+            resolve(value);
+          })
+          .catch(e => dispatch('setFail', e))
+          .finally(() => dispatch('setLoading', false));
       });
     },
 
-    search: ({dispatch, commit}, value) => {
+    search: ({ dispatch, commit }, value) => {
       commit(CONST_FILTER, value);
       return dispatch('getAsyncData', value);
     },
 
-    getData: () => (console.error('Укажите getData в actions')),
+    getData: () => console.error('Укажите getData в actions'),
     ...actions
   };
 };
